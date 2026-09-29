@@ -1,26 +1,27 @@
-## Experiment Conclusions / 实验结论
+# Week 1 Day 4 - LLM Inference Parameters
+# 第一周第四天 - LLM 推理参数
 
-### Temperature Experiment / Temperature 实验
+## Core Memory / 核心记忆
 
-#### temperature = 0.2
+- **max_new_tokens = output length = 控制最多生成多少个新 token**
+- **temperature = randomness = 控制采样随机程度**
+- **top_p = cumulative probability range = 根据累计概率控制候选 token 范围**
 
-The output is more conservative and stable.
+---
 
-输出更保守、更稳定，但内容可能更重复。
+## max_new_tokens
 
-#### temperature = 0.7
+`max_new_tokens` controls the maximum number of new tokens generated after the prompt.
 
-The output becomes more diverse and flexible.
+`max_new_tokens` 控制模型在 Prompt 后最多生成多少个新的 token。
 
-输出开始更多样、更灵活，同时仍然保持一定稳定性。
+---
 
-#### temperature = 1.2
+## Temperature
 
-The output becomes more random and less stable.
+Temperature changes how concentrated or spread out the token probability distribution is during sampling.
 
-输出更随机、更发散，也更容易出现重复、逻辑跳跃或奇怪表达。
-
-### Core Memory / 核心记忆
+Temperature 会影响采样时 token 概率分布的集中或分散程度。
 
 - **Lower temperature = more stable and conservative = 更稳定、更保守**
 - **Higher temperature = more random and diverse = 更随机、更多样**
@@ -28,70 +29,62 @@ The output becomes more random and less stable.
 
 ---
 
-### top_k Experiment / top_k 实验
+## top_p
 
-#### top_k = 5
+`top_p` keeps a dynamic set of candidate tokens based on cumulative probability.
 
-The candidate set is small, so the output is usually more conservative and focused.
+`top_p` 根据累计概率动态决定候选 token 范围。
 
-候选 token 数量较少，因此输出通常更保守、更集中，也可能更容易重复。
+- **Smaller top_p = narrower candidate range = 候选范围更窄**
+- **Larger top_p = wider candidate range = 候选范围更大**
 
-#### top_k = 20
+`top_p = 0.8` does NOT mean keeping 80% of all tokens.
 
-The model has more candidate tokens to choose from, so the output becomes more flexible.
+`top_p = 0.8` 不是保留全部 token 的 80%，而是从高概率 token 开始累加，直到累计概率达到约 0.8。
 
-模型有更多候选 token 可以选择，因此输出会更灵活、更多样。
+## Text Generation Flow / 文本生成流程
 
-#### top_k = 50
+Text
+→ Tokenizer
+→ Token IDs
+→ GPT-2
+→ generate()
+→ Generated Token IDs(原始 Prompt 的 Token IDs +新生成的 Token IDs)
+→ Tokenizer.decode()
+→ Text
 
-The candidate set becomes larger, which can increase diversity but may also reduce stability.
+- **AutoTokenizer = Text ↔ Token IDs**
+- **AutoModelForCausalLM = 根据前面的 token 预测下一个 token**
+- **max_new_tokens = 最多生成多少个新 token**
+- **do_sample=False = 关闭随机采样，方便控制变量**
+- **decode() = Token IDs → Text**
 
-候选范围进一步扩大，输出会更多样，但也可能更发散、更不稳定。
+## Experiment Results / 实验结果
 
-### Core Memory / 核心记忆
+### max_new_tokens-控制最多生成多少个新的token
 
-- **Smaller top_k = fewer candidates = 候选更少，更保守**
-- **Larger top_k = more candidates = 候选更多，输出更多样**
-- **top_k = fixed number of candidate tokens = top_k 控制固定数量的候选 token**
+- 10:
+- 30:
+- 60:
 
----
-
-### top_p Experiment / top_p 实验
-
-#### top_p = 0.5
-
-The candidate probability range is smaller, so the output is usually more conservative and may become repetitive.
-
-候选概率范围较小，因此输出通常更保守，也可能更容易重复。
-
-#### top_p = 0.8
-
-The output becomes more balanced and diverse.
-
-输出通常更平衡，也更多样。
-
-#### top_p = 0.95
-
-The candidate range becomes larger, which can increase diversity but may also make the output more unpredictable.
-
-候选范围更大，输出更多样，但也可能更发散、更不稳定。
-
-### Core Memory / 核心记忆
-
-- **Smaller top_p = narrower candidate range = 候选范围更窄，更保守**
-- **Larger top_p = wider candidate range = 候选范围更大，输出更多样**
-- **top_p = cumulative probability = top_p 根据累计概率动态决定候选 token 范围**
+My observation / 我的观察：
 
 ---
 
-## Final Comparison / 最终对比
+### temperature-控制采样随机程度
 
-- **temperature = controls randomness = 控制随机程度**
-- **top_k = controls how many candidate tokens remain = 控制保留多少个候选 token**
-- **top_p = controls cumulative probability range = 控制保留多大的累计概率范围**
+- 0.2:
+- 0.7:
+- 1.2:
 
-### One-line Memory / 一句话记忆
+My observation / 我的观察：
 
-- **temperature：有多随机**
-- **top_k：留多少个候选**
-- **top_p：留多大的概率范围**
+---
+
+### top_p累计概率控制候选概率
+
+- 0.5:
+- 0.8:
+- 0.95:
+
+My observation / 我的观察：
