@@ -6,6 +6,8 @@
 - **max_new_tokens = output length = 控制最多生成多少个新 token**
 - **temperature = randomness = 控制采样随机程度**
 - **top_p = cumulative probability range = 根据累计概率控制候选 token 范围**
+- - **top_k = number of candidates = 控制保留多少个候选 token**
+
 
 ---
 
