@@ -15,21 +15,25 @@ model = AutoModelForSequenceClassification.from_pretrained(
     model_name
 )
 
-text = "I love this movie!"
-
+texts = [
+    "I love this movie!",
+    "This movie is terrible.",
+    "The movie is okay.",
+    "I hate this product.",
+]
 inputs = tokenizer(
-    text,
+    texts,
     return_tensors="pt",
 )
 
 with torch.no_grad():
     outputs = model(**inputs)
 
-print("Logits:")
-print(outputs.logits)
+probability=torch.softmax(outputs.logits,dim=-1)
+print(probability)
+class_ids=torch.argmax(probability,dim=-1)
+print(class_ids)
+for text, class_id in zip(texts, class_ids):
+    label = model.config.id2label[class_id.item()]
+    print(text, "->", label)
 
-print("\nLogits shape:")
-print(outputs.logits.shape)
-
-print("\nid2label:")
-print(model.config.id2label)

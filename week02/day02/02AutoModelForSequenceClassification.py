@@ -1,21 +1,35 @@
 from transformers import (
     AutoTokenizer,
-    AutoModelForSequenceClassification
+    AutoModelForSequenceClassification,
 )
+import torch
 
-tokenizer = AutoTokenizer.from_pretrained(
+
+model_name = (
     "distilbert-base-uncased-finetuned-sst-2-english"
 )
+
+tokenizer = AutoTokenizer.from_pretrained(model_name)
 
 model = AutoModelForSequenceClassification.from_pretrained(
-    "distilbert-base-uncased-finetuned-sst-2-english"
+    model_name
 )
+
+text = "I love this movie!"
 
 inputs = tokenizer(
-    "I love Hugging Face",
-    return_tensors="pt"
+    text,
+    return_tensors="pt",
 )
 
-outputs = model(**inputs)
+with torch.no_grad():
+    outputs = model(**inputs)
 
+print("Logits:")
 print(outputs.logits)
+
+print("\nLogits shape:")
+print(outputs.logits.shape)
+
+print("\nid2label:")
+print(model.config.id2label)

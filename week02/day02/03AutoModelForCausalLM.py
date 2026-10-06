@@ -1,22 +1,41 @@
 from transformers import (
     AutoTokenizer,
-    AutoModelForCausalLM
+    AutoModelForCausalLM,
+)
+import torch
+
+
+model_name = "distilgpt2"
+
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+model = AutoModelForCausalLM.from_pretrained(
+    model_name
 )
 
-tokenizer = AutoTokenizer.from_pretrained("gpt2")
-
-model = AutoModelForCausalLM.from_pretrained("gpt2")
+text = "I love machine learning"
 
 inputs = tokenizer(
-    "Hugging Face is",
-    return_tensors="pt"
+    text,
+    return_tensors="pt",
 )
 
-outputs = model.generate(
-    **inputs,
-    max_new_tokens=30
-)
+with torch.no_grad():
+    outputs = model(**inputs)
 
-print(
-    tokenizer.decode(outputs[0])
-)
+print("\nInput shape:")
+print(inputs["input_ids"].shape)
+
+print("\nLogits shape:")
+print(outputs.logits.shape)
+
+next_token_logits = outputs.logits[:, -1, :]
+print("\nNext token logits shape:")
+print(next_token_logits.shape)
+
+next_token_ids = torch.argmax(next_token_logits, dim=-1)
+print("\nNext token ids:")
+print(next_token_ids)
+next_token=tokenizer.decode(next_token_ids)
+print("\nNext token:")
+print(next_token)
