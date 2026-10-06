@@ -35,3 +35,31 @@ Softmax类别概率，logits → class probabilities
 Argmax找到概率最大的类别
 id2label ID → Label
 
+
+**AutoTokenizer 是干什么的？**
+加载分词器，将文本->token->token id
+**input_ids 是什么？**
+模型输入的Tensor ID
+**attention_mask 是什么？**
+告诉模型哪些是真实的token，哪些是padding的token ID
+**return_tensors="pt" 是什么？**
+让Tokenizer分词器返回pytorh Tensor
+_model(**inputs) 为什么有 **？_
+将字典inputs拆关键字入参给模型
+**forward pass 是什么？**
+根据模型输入，向前计算得到模型输出
+**outputs.logits 是什么？**
+每个类别的原始预测分数
+****logits 为什么不是 probability？**
+logits是每个类别的原始预测分数，没有经过归一化计算得到probability
+**softmax 做什么？**
+logits经过函数softmax，计算得到probability
+**dim=-1 是什么意思？**
+最后一个维度的计算
+**argmax 做什么？**
+最大值
+**model.config.id2label 做什么？**
+token ID-人类可读的label
+**为什么 inference 使用 torch.no_grad()？**
+关闭梯度计算，减少内存，提高计算效率
+**pipeline 到底替我们封装了哪些步骤？**
