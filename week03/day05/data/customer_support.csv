@@ -1,0 +1,22 @@
+text,label
+"Where is my order?",shipping
+"My package has not arrived",shipping
+"My delivery is late",shipping
+"When will my package arrive?",shipping
+"I cannot track my package",shipping
+"I want a refund",refund
+"Please give me my money back",refund
+"I want to return this order",refund
+"How can I request a refund?",refund
+"My refund has not arrived",refund
+"My payment failed",payment
+"My card was declined",payment
+"I was charged twice",payment
+"The payment is still pending",payment
+"I cannot complete the payment",payment
+"The product is damaged",product_issue
+"I received the wrong product",product_issue
+"The product does not work",product_issue
+"My item arrived broken",product_issue
+"There is a problem with the product",product_issue
+,
