@@ -1,0 +1,11 @@
+text,label
+"Where is my order?",shipping
+"I want a refund",refund
+"My payment failed",payment
+"My package hasn't arrived",shipping
+"I received a damaged product",product_issue
+"I want my money back",refund
+"My card was charged twice",payment
+"The product doesn't work",product_issue
+"My order is late",shipping
+"I received the wrong item",product_issue

@@ -7,3 +7,13 @@
 4. Train 用于训练并更新参数，Validation 用于训练过程中评估和选择，Test 用于最终评估。
 
 5. train_test_split(test_size=..., seed=...) 可以把 Dataset 随机划分为 train/test，其中 test_size 控制 test 大小，seed 用于保证划分可复现。
+
+
+Train
+→ 模型学习 / 更新参数
+
+Validation
+→ 训练过程中评估、比较、选择
+
+Test
+→ 最终评估
