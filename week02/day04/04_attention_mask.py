@@ -1,19 +1,31 @@
 from transformers import AutoTokenizer
 
-tokenizer = AutoTokenizer.from_pretrained(
-    "bert-base-uncased"
+
+model_name = (
+    "distilbert-base-uncased-finetuned-sst-2-english"
 )
+
+tokenizer = AutoTokenizer.from_pretrained(model_name)
 
 texts = [
-    "I love Hugging Face",
-    "Transformers are amazing",
-    "Deep learning"
+    "Hello!",
+    "I really love machine learning!",
 ]
-long_text = "This is a very long sentence ..." * 100
-encoding = tokenizer(
+
+inputs = tokenizer(
     texts,
     padding=True,
-    return_tensors="pt"
+    return_tensors="pt",
 )
 
-print(encoding["attention_mask"])
+print("Input IDs:")
+print(inputs["input_ids"])
+
+print("\nAttention Mask:")
+print(inputs["attention_mask"])
+
+print("\nInput IDs shape:")
+print(inputs["input_ids"].shape)
+
+print("\nAttention Mask shape:")
+print(inputs["attention_mask"].shape)

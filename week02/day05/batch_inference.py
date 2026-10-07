@@ -1,62 +1,80 @@
-from transformers import AutoTokenizer
-from transformers import AutoModelForSequenceClassification
+from transformers import AutoTokenizer,AutoModelForSequenceClassification
 import torch
-
-#batch
+import json
+import csv
+model_name = (
+    "distilbert-base-uncased-finetuned-sst-2-english"
+)
+tokenizer = AutoTokenizer.from_pretrained(model_name)#将原始文本作为模型的输入，可以将token ID解码回可读性文本的文本处理组件
+model = AutoModelForSequenceClassification.from_pretrained(model_name)
 texts = [
-    "I love Hugging Face.",
+    "I love this movie!",
     "This movie is terrible.",
-    "The weather is wonderful today.",
-    "I am disappointed with the service.",
-    "Transformers are amazing."
+    "The movie is okay.",
+    "I hate this product.",
 ]
-#tokenizer分词器
-#from_pretrained一键加载预训练模型的权重和配置
-tokenizer=AutoTokenizer.from_pretrained(
-    "distilbert-base-uncased-finetuned-sst-2-english"
+inputs = tokenizer(texts, padding=True, truncation=True, return_tensors="pt")
+# print(inputs.keys())
+# input_ids
+# → 每个位置是什么 Token
+#
+# attention_mask
+# → 哪些位置是真实输入，哪些位置是 Padding
+with torch.no_grad():
+    outputs = model(**inputs)
+logits = outputs.logits
+probabilities=torch.softmax(logits, dim=-1)
+predicted_class_ids = torch.argmax(
+    probabilities,
+    dim=-1,
 )
-#加载模型
-model = AutoModelForSequenceClassification.from_pretrained(
-    "distilbert-base-uncased-finetuned-sst-2-english"
-)
-#使用分析器处理文本
-#return_tensors=用于将 Tokenizer 输出转换为 PyTorch Tensor
-#padding=True batch补齐
-#truncation自动截断
-encoding=tokenizer(texts, return_tensors="pt", padding=True, truncation=True)
-# outputs = model(
-#     input_ids=encoding["input_ids"],
-#     attention_mask=encoding["attention_mask"]
-# )
-outputs = model(**encoding)
-#从 outputs 中提取 logits
-# print(outputs.logits)
-#使用 Softmax 计算归一化概率
-probabilities = torch.softmax(
-    outputs.logits,
-    dim=-1
-)
-# print(probabilities)
-#获取预测类别 ID（正类别 负类别）
-predictions = torch.argmax(probabilities, dim=-1)
-# print(predictions)
-labels = [
-    #model.config.id2label[...]：
-    #id2label 是预训练模型配置文件中存储的数字ID到文本标签映射字典。
-    model.config.id2label[idx.item()]
-    #遍历 0 1
-    for idx in predictions
-]
+# =====================================
 results = []
-for text, label in zip(
+
+for text, probs, class_id in zip(
     texts,
-    labels
+    probabilities,
+    predicted_class_ids,
 ):
+    class_id = class_id.item()
+    label = model.config.id2label[class_id]
+    score = probs[class_id].item()
     results.append(
         {
             "text": text,
-            "label": label
+            "label": label,
+            "score": score,
         }
     )
 
 print(results)
+
+with open(
+    "predictions.json",
+    "w",
+    encoding="utf-8",
+) as f:
+    json.dump(
+        results,
+        f,
+        ensure_ascii=False,
+        indent=2,
+    )
+
+with open(
+    "predictions.csv",
+    "w",
+    newline="",
+    encoding="utf-8",
+) as f:
+    writer = csv.DictWriter(
+        f,
+        fieldnames=[
+            "text",
+            "label",
+            "score",
+        ],
+    )
+
+    writer.writeheader()
+    writer.writerows(results)

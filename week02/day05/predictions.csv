@@ -1,0 +1,5 @@
+text,label,score
+I love this movie!,POSITIVE,0.9998775720596313
+This movie is terrible.,NEGATIVE,0.9997261166572571
+The movie is okay.,POSITIVE,0.9998489618301392
+I hate this product.,NEGATIVE,0.9997596144676208

@@ -1,19 +1,51 @@
 from transformers import AutoTokenizer
 
-tokenizer = AutoTokenizer.from_pretrained(
-    "bert-base-uncased"
+
+model_name = (
+    "distilbert-base-uncased-finetuned-sst-2-english"
 )
 
-texts = [
-    "I love Hugging Face",
-    "Transformers are amazing",
-    "Deep learning"
-]
-long_text = "This is a very long sentence ..." * 100
-encoding = tokenizer(
-    long_text,
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+text = (
+    "Machine learning and natural language processing "
+    "are very interesting fields of artificial intelligence."
+)
+
+
+without_truncation = tokenizer(
+    text
+)
+
+with_truncation = tokenizer(
+    text,
     truncation=True,
-    max_length=16
+    max_length=10,
 )
 
-print(len(encoding["input_ids"]))
+
+print("Without truncation:")
+print(without_truncation["input_ids"])
+print(
+    "Length:",
+    len(without_truncation["input_ids"]),
+)
+
+
+print("\nWith truncation:")
+print(with_truncation["input_ids"])
+print(
+    "Length:",
+    len(with_truncation["input_ids"]),
+)
+print(
+    tokenizer.decode(
+        without_truncation["input_ids"]
+    )
+)
+
+print(
+    tokenizer.decode(
+        with_truncation["input_ids"]
+    )
+)

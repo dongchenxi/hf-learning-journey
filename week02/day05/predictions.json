@@ -1,0 +1,22 @@
+[
+  {
+    "text": "I love this movie!",
+    "label": "POSITIVE",
+    "score": 0.9998775720596313
+  },
+  {
+    "text": "This movie is terrible.",
+    "label": "NEGATIVE",
+    "score": 0.9997261166572571
+  },
+  {
+    "text": "The movie is okay.",
+    "label": "POSITIVE",
+    "score": 0.9998489618301392
+  },
+  {
+    "text": "I hate this product.",
+    "label": "NEGATIVE",
+    "score": 0.9997596144676208
+  }
+]
