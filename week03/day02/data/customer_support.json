@@ -1,0 +1,14 @@
+[
+  {
+    "text": "Where is my order?",
+    "label": "shipping"
+  },
+  {
+    "text": "I want a refund",
+    "label": "refund"
+  },
+  {
+    "text": "My payment failed",
+    "label": "payment"
+  }
+]
