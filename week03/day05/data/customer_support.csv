@@ -1,22 +1,82 @@
 text,label
-"Where is my order?",shipping
-"My package has not arrived",shipping
-"My delivery is late",shipping
-"When will my package arrive?",shipping
-"I cannot track my package",shipping
-"I want a refund",refund
-"Please give me my money back",refund
-"I want to return this order",refund
-"How can I request a refund?",refund
-"My refund has not arrived",refund
-"My payment failed",payment
-"My card was declined",payment
-"I was charged twice",payment
-"The payment is still pending",payment
-"I cannot complete the payment",payment
-"The product is damaged",product_issue
-"I received the wrong product",product_issue
-"The product does not work",product_issue
-"My item arrived broken",product_issue
-"There is a problem with the product",product_issue
+Where is my order?,shipping
+My package has not arrived,shipping
+My delivery is late,shipping
+When will my package arrive?,shipping
+I cannot track my package,shipping
+I want a refund,refund
+Please give me my money back,refund
+I want to return this order,refund
+How can I request a refund?,refund
+My refund has not arrived,refund
+My payment failed,payment
+My card was declined,payment
+I was charged twice,payment
+The payment is still pending,payment
+I cannot complete the payment,payment
+The product is damaged,product_issue
+I received the wrong product,product_issue
+The product does not work,product_issue
+My item arrived broken,product_issue
+There is a problem with the product,product_issue
+My package is delayed,shipping
+Can I track my shipment?,shipping
+Where is my delivery?,shipping
+The courier has not contacted me,shipping
+My order has not shipped yet,shipping
+I need an update on delivery,shipping
+The tracking number is not working,shipping
+My package was sent to the wrong address,shipping
+Can I change the delivery address?,shipping
+The delivery date has passed,shipping
+My parcel is missing,shipping
+I received no shipping confirmation,shipping
+How long does shipping take?,shipping
+The package arrived later than expected,shipping
+How do I request a refund?,refund
+I want to return my purchase,refund
+Please refund my order,refund
+When will I receive my refund?,refund
+I changed my mind about the order,refund
+The refund has not appeared yet,refund
+Can I get my money back?,refund
+I would like to cancel and refund this order,refund
+What is the refund policy?,refund
+I returned the product but got no refund,refund
+Please help me with a return,refund
+I was charged for an item I returned,refund
+How long does a refund take?,refund
+I want to send this item back,refund
+My refund amount is incorrect,refund
+Why was my card declined?,payment
+I cannot pay for my order,payment
+The payment keeps failing,payment
+My credit card was rejected,payment
+I was charged twice for one order,payment
+The payment is still pending,payment
+My payment did not go through,payment
+Can I use another payment method?,payment
+The checkout payment failed,payment
+I do not recognize this payment,payment
+My bank payment was declined,payment
+The payment page is not working,payment
+I was charged the wrong amount,payment
+How can I update my payment method?,payment
+The transaction disappeared from my account,payment
+The item I received is broken,product_issue
+My product does not work,product_issue
+I received the wrong item,product_issue
+The product arrived damaged,product_issue
+There is a defect in my order,product_issue
+The item is missing a part,product_issue
+The product quality is poor,product_issue
+My device stopped working,product_issue
+The product looks different from the description,product_issue
+I received a damaged package,product_issue
+The item cannot be used,product_issue
+The product has a manufacturing problem,product_issue
+One part of the order is defective,product_issue
+The item arrived with scratches,product_issue
+The product is not what I ordered,product_issue
+When will my order arrive?,shipping
 ,
