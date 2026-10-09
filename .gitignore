@@ -6,6 +6,7 @@ dist/
 wheels/
 *.egg-info
 .idea/
+/week04/day02/outputs/
 
 # Virtual environments
 .venv
