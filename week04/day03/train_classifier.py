@@ -1,18 +1,24 @@
 from pathlib import Path
 
+import numpy as np
 from datasets import DatasetDict, load_dataset
+from sklearn.metrics import (
+    accuracy_score,
+    classification_report,
+    f1_score,
+)
 from transformers import (
     AutoModelForSequenceClassification,
     AutoTokenizer,
     DataCollatorWithPadding,
-    set_seed,
+    Trainer,
     TrainingArguments,
-    Trainer
+    set_seed,
 )
-import numpy as np
-import torch
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
 DATA_PATH = (
     PROJECT_ROOT
     / 'week03'
@@ -31,10 +37,13 @@ MODEL_CHECKPOINT = (
     / 'checkpoint-24'
 )
 
-if not MODEL_CHECKPOINT.is_dir():
-    raise FileNotFoundError(
-        f'Checkpoint not found: {MODEL_CHECKPOINT}'
-    )
+OUTPUT_DIR = (
+    PROJECT_ROOT
+    / 'week04'
+    / 'day03'
+    / 'outputs'
+)
+
 VALID_LABELS = {
     'shipping',
     'refund',
@@ -42,7 +51,14 @@ VALID_LABELS = {
     'product_issue',
 }
 
-set_seed(42)
+SEED = 42
+
+set_seed(SEED)
+
+if not MODEL_CHECKPOINT.is_dir():
+    raise FileNotFoundError(
+        f'Checkpoint not found: {MODEL_CHECKPOINT}'
+    )
 
 
 def has_valid_example(example):
@@ -67,7 +83,7 @@ def remove_duplicate_texts(dataset):
     return dataset.select(keep_indices)
 
 
-# Load, clean, and deduplicate.
+# 1. Load, clean, and deduplicate.
 dataset = load_dataset(
     'csv',
     data_files=str(DATA_PATH),
@@ -76,19 +92,22 @@ dataset = load_dataset(
 
 clean_dataset = dataset.filter(has_valid_example)
 deduplicated_dataset = remove_duplicate_texts(clean_dataset)
-encoded_dataset = deduplicated_dataset.class_encode_column('label')
+
+encoded_dataset = deduplicated_dataset.class_encode_column(
+    'label'
+)
 
 
-# Create train / validation / test splits.
+# 2. Reproduce the training-time splits.
 first_split = encoded_dataset.train_test_split(
     test_size=0.4,
-    seed=42,
+    seed=SEED,
     stratify_by_column='label',
 )
 
 validation_test_split = first_split['test'].train_test_split(
     test_size=0.5,
-    seed=42,
+    seed=SEED,
     stratify_by_column='label',
 )
 
@@ -99,8 +118,10 @@ dataset_dict = DatasetDict({
 })
 
 
-# Tokenize the datasets.
-tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_CHECKPOINT)
+# 3. Tokenize.
+tokenizer = AutoTokenizer.from_pretrained(
+    TOKENIZER_CHECKPOINT
+)
 
 
 def tokenize_function(batch):
@@ -131,56 +152,43 @@ data_collator = DataCollatorWithPadding(
 )
 
 
-# Build label mappings and load the classification model.
-label_names = training_dataset['train'].features['label'].names
+# 4. Load the fine-tuned model and verify label IDs.
+label_names = training_dataset['validation'].features['label'].names
+label_ids = list(range(len(label_names)))
 
 id2label = {
     index: name
     for index, name in enumerate(label_names)
 }
 
-label2id = {
-    name: index
-    for index, name in id2label.items()
-}
-
 model = AutoModelForSequenceClassification.from_pretrained(
     str(MODEL_CHECKPOINT)
 )
 
-def compute_metrics(eval_pred):
-    logits, labels = eval_pred
-    predicted_ids = np.argmax(logits, axis=-1)
-    accuracy = (predicted_ids == labels).mean()
-    return {
-        'accuracy': float(accuracy),
-    }
-
-OUTPUT_DIR = (
-    PROJECT_ROOT
-    / 'week04'
-    / 'day03'
-    / 'outputs'
-)
+if model.config.id2label != id2label:
+    raise ValueError(
+        'Dataset label mapping does not match the checkpoint.'
+    )
 
 
+# 5. Create an evaluation Trainer.
 training_args = TrainingArguments(
     output_dir=str(OUTPUT_DIR),
     per_device_eval_batch_size=4,
     dataloader_pin_memory=False,
     report_to='none',
-    seed=42,
+    seed=SEED,
 )
+
 trainer = Trainer(
     model=model,
     args=training_args,
-    train_dataset=training_dataset['train'],
-    eval_dataset=training_dataset['validation'],
     processing_class=tokenizer,
     data_collator=data_collator,
-    compute_metrics=compute_metrics,
 )
 
+
+# 6. Predict on validation.
 prediction_output = trainer.predict(
     training_dataset['validation']
 )
@@ -190,40 +198,12 @@ true_ids = prediction_output.label_ids
 
 predicted_ids = np.argmax(logits, axis=-1)
 
-print('\n--- Validation Predictions ---')
-print('True IDs:', true_ids.tolist())
-print('Predicted IDs:', predicted_ids.tolist())
 
-from sklearn.metrics import (
-    accuracy_score,
-    classification_report,
+# 7. Calculate metrics.
+accuracy = accuracy_score(
+    true_ids,
+    predicted_ids,
 )
-
-
-label_names = training_dataset['validation'].features['label'].names
-label_ids = list(range(len(label_names)))
-
-print('\n--- Validation Evaluation ---')
-
-print(
-    'Accuracy:',
-    accuracy_score(true_ids, predicted_ids),
-)
-
-print(
-    classification_report(
-        true_ids,
-        predicted_ids,
-        labels=label_ids,
-        target_names=label_names,
-        digits=4,
-        zero_division=0,
-    )
-)
-from sklearn.metrics import accuracy_score, f1_score
-
-
-accuracy = accuracy_score(true_ids, predicted_ids)
 
 macro_f1 = f1_score(
     true_ids,
@@ -233,6 +213,18 @@ macro_f1 = f1_score(
     zero_division=0,
 )
 
-print('\n--- Evaluation Summary ---')
-print(f'Validation accuracy: {accuracy:.4f}')
-print(f'Validation macro F1: {macro_f1:.4f}')
+report = classification_report(
+    true_ids,
+    predicted_ids,
+    labels=label_ids,
+    target_names=label_names,
+    digits=4,
+    zero_division=0,
+)
+
+
+# 8. Print the evaluation results.
+print('\n--- Validation Evaluation ---')
+print(f'Accuracy: {accuracy:.4f}')
+print(f'Macro F1: {macro_f1:.4f}')
+print(report)
