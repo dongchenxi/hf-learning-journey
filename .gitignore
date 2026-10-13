@@ -12,3 +12,8 @@ wheels/
 .venv
 .DS_Store
 .DS_Store
+# Exported model artifacts
+week04/day05/model/config.json
+week04/day05/model/model.safetensors
+week04/day05/model/tokenizer.json
+week04/day05/model/tokenizer_config.json
