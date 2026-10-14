@@ -17,3 +17,4 @@ week04/day05/model/config.json
 week04/day05/model/model.safetensors
 week04/day05/model/tokenizer.json
 week04/day05/model/tokenizer_config.json
+week06/day04/outputs/lora_adapter/

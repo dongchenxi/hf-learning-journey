@@ -1,0 +1,43 @@
+{
+  "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+  "lora_config": {
+    "r": 8,
+    "lora_alpha": 16,
+    "target_modules": [
+      "q_proj",
+      "v_proj"
+    ],
+    "lora_dropout": 0.1,
+    "bias": "none",
+    "task_type": "CAUSAL_LM"
+  },
+  "training_config": {
+    "learning_rate": 0.0001,
+    "num_epochs": 3,
+    "num_examples": 3,
+    "batch_size": 1,
+    "optimizer": "AdamW",
+    "seed": 42
+  },
+  "training_results": {
+    "total_steps": 9,
+    "loss_history": [
+      4.3578572273254395,
+      4.298247337341309,
+      3.847757339477539,
+      3.8226654529571533,
+      3.794764518737793,
+      3.476468563079834,
+      3.4862215518951416,
+      3.491434335708618,
+      3.2662317752838135
+    ],
+    "first_loss": 4.3578572273254395,
+    "last_loss": 3.2662317752838135
+  },
+  "parameter_check": {
+    "tracked_parameter": "base_model.model.model.layers.0.self_attn.q_proj.lora_B.default.weight",
+    "max_parameter_change": 0.0009044055477716029,
+    "lora_parameter_changed": true
+  }
+}
